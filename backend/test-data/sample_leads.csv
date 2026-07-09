@@ -1,0 +1,7 @@
+Person Name,Email Address,Work Contact,Firm Name,HQ City,State,Status Info,Lead Source,Purchase Period,Extra Description
+Alice Smith,alice@smith.com,+1 (555) 019-2834,Acme Corp,New York,NY,hot lead,leads_on_demand,Immediate,Looking to buy 5 plots
+Bob Johnson,bob@johnson.com,+91 98765 43210,Globex,Bangalore,Karnataka,call back,eden_park,3 months,Interested in premium villas
+Charlie Brown,,0987654321,Brown Inc,London,,wrong number,,,
+David Miller,david@miller.com,,Miller LLC,Paris,,Closed,sarjapur_plots,,
+Eve,eve@invalid-email,,,,,,,,,
+Frank,,,,,,,,,
