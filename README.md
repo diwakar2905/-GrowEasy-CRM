@@ -69,15 +69,19 @@ d:/Assesment/
 │   │   └── validators/         # Zod validation rules and format cleanups
 │   ├── package.json
 │   ├── tsconfig.json
+│   ├── Dockerfile              # Docker container setup for Node backend
 │   └── .env
-└── frontend/
-    ├── app/                    # Next.js App Router & Global Styles
-    ├── components/             # Reusable UI (Cards, Buttons, Tables, Dropzones)
-    ├── features/               # Pipeline stages (Landing, Preview, Progress, Results)
-    ├── types/                  # Typed interfaces matching backend structures
-    ├── package.json
-    ├── tsconfig.json
-    └── tailwind.config.ts
+├── frontend/
+│   ├── app/                    # Next.js App Router & Global Styles
+│   ├── components/             # Reusable UI (Cards, Buttons, Tables, Dropzones)
+│   ├── features/               # Pipeline stages (Landing, Preview, Progress, Results)
+│   ├── types/                  # Typed interfaces matching backend structures
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── Dockerfile              # Docker container setup for Next.js frontend
+│   └── tailwind.config.ts
+├── docker-compose.yml          # Orchestrates local frontend and backend services
+└── .gitignore                  # Root gitignore rules ignoring dependencies/builds
 ```
 
 ---
@@ -88,10 +92,11 @@ d:/Assesment/
 Create a `.env` file inside the `backend` folder:
 ```env
 PORT=5000
-CORS_ORIGIN=http://localhost:3000
+CORS_ORIGIN=http://localhost:3000,https://grow-easy-crm-tau.vercel.app
 GEMINI_API_KEY=your_gemini_api_key_here
 NODE_ENV=development
 ```
+*(Note: CORS_ORIGIN can be a comma-separated list of permitted origins, e.g., your Vercel domains. The backend also accepts requests from any origin ending in `.vercel.app` dynamically).*
 
 ### Frontend (`frontend/.env.local`)
 Create a `.env.local` file inside the `frontend` folder:
@@ -106,8 +111,22 @@ NEXT_PUBLIC_API_URL=http://localhost:5000
 ### Prerequisites
 - **Node.js**: >= 20.x
 - **pnpm**: >= 10.x (chosen for high speed, disk spaces saving, and workspaces optimization)
+- **Docker & Docker Compose** (Optional, for running with containers)
 
-### Step 1: Running the Backend
+### Option A: Running with Docker Compose (Recommended & Fastest)
+You can boot up the entire project (both backend and frontend) with a single command:
+1. Ensure your `GEMINI_API_KEY` is set in your environment variables.
+2. From the root directory (`d:/Assesment/`), run:
+   ```bash
+   docker compose up --build
+   ```
+3. Open your browser and navigate to `http://localhost:3000`.
+
+---
+
+### Option B: Running Locally
+
+#### Step 1: Running the Backend
 1. Navigate to the backend folder:
    ```bash
    cd backend
@@ -126,7 +145,7 @@ NEXT_PUBLIC_API_URL=http://localhost:5000
    ```
    *The server runs locally on `http://localhost:5000`.*
 
-### Step 2: Running the Frontend
+#### Step 2: Running the Frontend
 1. In a new terminal tab, navigate to the frontend folder:
    ```bash
    cd ../frontend
@@ -145,16 +164,25 @@ NEXT_PUBLIC_API_URL=http://localhost:5000
 
 ## 🚢 Deployment Guidelines
 
-### Backend (Railway, Render, or Heroku)
-1. Link your git repository. Set directory to `backend`.
-2. Add environment variables: `PORT`, `CORS_ORIGIN` (point to your deployed frontend domain), `GEMINI_API_KEY`, and `NODE_ENV=production`.
-3. Build & start commands:
-   ```bash
-   pnpm run build && pnpm run start
-   ```
+### Backend (Render)
+1. Link your monorepo git repository.
+2. In **Render Settings**:
+   - Set **Root Directory** to `backend`.
+   - Set **Build Command** to `pnpm install && pnpm run build`.
+   - Set **Start Command** to `pnpm run start`.
+3. Add environment variables under **Environment**:
+   - `PORT` (automatically assigned by Render, defaults to `5000` if not set)
+   - `CORS_ORIGIN`: `https://your-frontend-domain.vercel.app` (do not include trailing slashes)
+   - `GEMINI_API_KEY`: Your Gemini API Key
+   - `NODE_ENV`: `production`
 
-### Frontend (Vercel or Netlify)
-1. Link your repository. Set root directory to `frontend`.
-2. Set build command to `pnpm run build`.
-3. Add environment variable: `NEXT_PUBLIC_API_URL` pointing to your deployed backend.
-4. Deploy!
+---
+
+### Frontend (Vercel)
+1. Link your monorepo git repository.
+2. In **Vercel Settings** under **General**:
+   - Set **Root Directory** to `frontend`.
+3. Under **Environment Variables**, add:
+   - `NEXT_PUBLIC_API_URL`: `https://your-backend-app.onrender.com` (do not include trailing slashes)
+4. Trigger a deploy! Vercel automatically detects Next.js, installs dependencies, builds, and publishes your site.
+
